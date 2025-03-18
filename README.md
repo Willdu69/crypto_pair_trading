@@ -1,93 +1,32 @@
 # crypto_pair_trading
 
+## Overview
 
+This repository contains a Python-based implementation of a statistical arbitrage strategy focused on cryptocurrency pairs. The core objective is to exploit temporary deviations from the historical correlation between two cryptocurrencies. This is achieved by identifying cointegrated pairs, calculating a spread, and then generating trading signals when the spread deviates significantly from its historical mean.
 
-## Getting started
+## Methodology
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+The strategy employs the following key steps:
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+1.  **Cointegration Analysis:** Statistical tests are used to identify pairs of cryptocurrencies that exhibit cointegration, indicating a long-term equilibrium relationship. This step is crucial for ensuring that the spread between the pair is mean-reverting.
+2.  **Spread Calculation:** Once a cointegrated pair is identified, the spread is calculated as a linear combination of the prices of the two cryptocurrencies. The coefficients of this linear combination are determined based on the cointegration relationship.
+3.  **Trading Signal Generation:** Trading signals are generated based on the deviation of the spread from its historical mean. A threshold-based approach is used, where buy and sell signals are triggered when the spread deviates by a certain number of standard deviations.
+4.  **Backtesting and Performance Evaluation:** The strategy's performance is evaluated through backtesting using historical cryptocurrency price data. Key performance metrics, such as total return, Sharpe ratio, and maximum drawdown, are calculated to assess the strategy's effectiveness.
 
-## Add your files
+## Implementation Details
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+The implementation leverages Python and several key libraries:
 
-```
-cd existing_repo
-git remote add origin https://gitlab.com/trading_strat_asso/crypto_pair_trading.git
-git branch -M main
-git push -uf origin main
-```
+* **Pandas:** For data manipulation and analysis.
+* **NumPy:** For numerical computations.
+* **Statsmodels:** For statistical modeling, including cointegration tests.
 
-## Integrate with your tools
+The repository includes scripts for:
 
-- [ ] [Set up project integrations](https://gitlab.com/trading_strat_asso/crypto_pair_trading/-/settings/integrations)
+* Running backtests of the pair trading strategy (`run_backtest.py`).
+* Executing the core pair trading logic (`strategies/pair_trading.py`).
+* Generating reports on account,orders, positions, etc.
 
-## Collaborate with your team
+## Results
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+Backtesting results, included in the `report` directory, demonstrate the potential profitability of the proposed pair trading strategy. The strategy exhibits positive returns and a favorable risk-adjusted performance as evidenced by the Sharpe ratio. Detailed reports provide insights into the strategy's performance, including order execution, position management, and overall account valuation.
