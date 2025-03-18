@@ -37,9 +37,7 @@ class PairTradingStrategy(Strategy):
 		self.instrument1: Optional[Instrument] = None
 		self.instrument2: Optional[Instrument] = None
 
-		# Stores the spread values
 		self.spread = deque(maxlen=config.formation_window)
-		# Hedge ratios (betas) for each instrument
 		self.betas = {config.instrument_id_1: 1.0, config.instrument_id_2: -1.0}
 		self.calc_pd = pd.DataFrame(columns=[f'price_{config.instrument_id_1}', f'price_{config.instrument_id_2}',
 		                                     f'beta_{config.instrument_id_1}', f'beta_{config.instrument_id_2}',
@@ -52,25 +50,18 @@ class PairTradingStrategy(Strategy):
 
 		for instrument_id, bar_type in self.config.bar_type.items():
 			self.subscribe_bars(bar_type)
-			# Request some recent historical bars to start
 			self.request_bars(bar_type, limit=self.config.formation_window)
 
 	def on_bar(self, bar: Bar):
 		"""Updates spread and betas, then checks for signals."""
-		# Wait until we have enough bars for both instruments
 		if not self._has_enough_bars():
 			return
-
-		# Update hedge ratios (betas) using Johansen test
 		self._update_betas()
-
-		# Update current spread value
 		self._update_spread()
 
 		if len(self.spread) < self.config.formation_window:
 			return
 
-		# Calculate z-score
 		spread_array = np.array(self.spread)
 		mean_spread = np.mean(spread_array)
 		std_spread = np.std(spread_array, ddof=1)
@@ -78,9 +69,7 @@ class PairTradingStrategy(Strategy):
 			return
 		z_score = (spread_array[-1] - mean_spread) / std_spread
 
-		# Trading logic (very basic)
 		if self._has_open_positions():
-			# Exit if z-score reverts
 			if abs(z_score) < self.config.exit_zscore_threshold:
 				self._close_all_positions()
 		else:
@@ -103,7 +92,6 @@ class PairTradingStrategy(Strategy):
 
 	def _update_betas(self):
 		"""Updates the cointegration hedge ratios using the Johansen test."""
-		# Collect recent prices for both instruments
 		data = {}
 		for instrument_id, bar_type in self.config.bar_type.items():
 			bars = self.cache.bars(bar_type)[-self.config.formation_window:]
@@ -113,14 +101,11 @@ class PairTradingStrategy(Strategy):
 			df_prices = pd.DataFrame(data)
 			johansen_res = coint_johansen(df_prices, det_order=0, k_ar_diff=1)
 			evec = johansen_res.evec[:, 0]
-			# Normalize so that the last instrument has coefficient -1.0
-			# (or any suitable normalization you prefer)
 			last_coeff = evec[-1]
 			betas_array = -evec / last_coeff
 			for i, instrument_id in enumerate(df_prices.columns):
 				self.betas[instrument_id] = betas_array[i]
 		except Exception as e:
-			# In case of any failure, fallback to some default
 			self.log.error(f"Failed to update betas: {e}")
 
 	def _update_spread(self):
@@ -144,7 +129,6 @@ class PairTradingStrategy(Strategy):
 		  - One short (SELL) for short_instrument
 		  - One long (BUY) for long_instrument
 		"""
-		# Arbitrary quantity for demonstration
 		long_short_ratio = 1 if orderside == OrderSide.BUY else -1
 		current_equity = self.get_current_equity()
 		capital_to_risk = self.config.capital_to_risk_ratio * current_equity
